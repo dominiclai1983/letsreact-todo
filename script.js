@@ -111,9 +111,28 @@ var ToDoList = function (_React$Component) {
       });
     }
   }, {
+    key: 'toggleComplete',
+    value: function toggleComplete(id, completed) {
+      var _this5 = this;
+
+      if (!id) {
+        return; // early return if no id
+      }
+      var newState = completed ? 'active' : 'complete';
+      fetch('https://altcademy-to-do-list-api.herokuapp.com/tasks/' + id + '/mark_' + newState + '?api_key=201', {
+        method: "PUT",
+        mode: "cors"
+      }).then(checkStatus).then(json).then(function (data) {
+        _this5.fetchTasks();
+      }).catch(function (error) {
+        _this5.setState({ error: error.message });
+        console.log(error);
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var _this5 = this;
+      var _this6 = this;
 
       var _state = this.state,
           new_task = _state.new_task,
@@ -138,7 +157,8 @@ var ToDoList = function (_React$Component) {
               return React.createElement(Task, {
                 key: task.id,
                 task: task,
-                onDelete: _this5.deleteTask
+                onDelete: _this6.deleteTask,
+                onComplete: _this6.toggleComplete
               });
             }) : React.createElement(
               'p',

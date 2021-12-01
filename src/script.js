@@ -92,6 +92,25 @@ const checkStatus = (response) => {
         })
     }
 
+    toggleComplete(id, completed) {
+      if (!id) {
+        return; // early return if no id
+      }
+      const newState = completed ? 'active' : 'complete';
+      fetch(`https://altcademy-to-do-list-api.herokuapp.com/tasks/${id}/mark_${newState}?api_key=201`, {
+        method: "PUT",
+        mode: "cors",
+      }).then(checkStatus)
+        .then(json)
+        .then((data) => {
+          this.fetchTasks();
+        })
+        .catch((error) => {
+          this.setState({ error: error.message });
+          console.log(error);
+        })
+    }
+
     render() {
       const { new_task, tasks } = this.state;
   
@@ -105,6 +124,7 @@ const checkStatus = (response) => {
                   key={task.id}
                   task={task}
                   onDelete={this.deleteTask}
+                  onComplete={this.toggleComplete}
                 />);
               }) : <p>no tasks here</p>}
               <form onSubmit={this.handleSubmit} className="form-inline my-4">
