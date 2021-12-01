@@ -33,20 +33,14 @@ var ToDoList = function (_React$Component) {
 
     _this.handleChange = _this.handleChange.bind(_this);
     _this.handleSubmit = _this.handleSubmit.bind(_this);
+    _this.fetchTasks = _this.fetchTasks.bind(_this);
     return _this;
   }
 
   _createClass(ToDoList, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var _this2 = this;
-
-      fetch("https://altcademy-to-do-list-api.herokuapp.com/tasks?api_key=201").then(checkStatus).then(json).then(function (response) {
-        console.log(response);
-        _this2.setState({ tasks: response.tasks });
-      }).catch(function (error) {
-        console.error(error.message);
-      });
+      this.fetchTasks(); // get tasks on mount
     }
   }, {
     key: 'handleChange',
@@ -56,8 +50,45 @@ var ToDoList = function (_React$Component) {
   }, {
     key: 'handleSubmit',
     value: function handleSubmit(event) {
+      var _this2 = this;
+
       event.preventDefault();
       // do nothing for now
+      var new_task = this.state.new_task;
+
+      new_task = new_task.trim();
+      if (!new_task) {
+        return;
+      }
+      fetch("https://altcademy-to-do-list-api.herokuapp.com/tasks?api_key=201", {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          task: {
+            content: new_task
+          }
+        })
+      }).then(checkStatus).then(json).then(function (data) {
+        _this2.setState({ new_task: '' });
+        _this2.fetchTasks();
+      }).catch(function (error) {
+        _this2.setState({ error: error.message });
+        console.log(error);
+      });
+    }
+  }, {
+    key: 'fetchTasks',
+    value: function fetchTasks() {
+      var _this3 = this;
+
+      // move the get tasks code into its own method so we can use it at other places
+      fetch("https://altcademy-to-do-list-api.herokuapp.com/tasks?api_key=201").then(checkStatus).then(json).then(function (response) {
+        console.log(response);
+        _this3.setState({ tasks: response.tasks });
+      }).catch(function (error) {
+        console.error(error.message);
+      });
     }
   }, {
     key: 'render',
@@ -82,7 +113,7 @@ var ToDoList = function (_React$Component) {
               'To Do List'
             ),
             tasks.length > 0 ? tasks.map(function (task) {
-              return null; // return nothing for now
+              return React.createElement(Task, { key: task.id, task: task });
             }) : React.createElement(
               'p',
               null,
@@ -111,6 +142,59 @@ var ToDoList = function (_React$Component) {
   }]);
 
   return ToDoList;
+}(React.Component);
+
+var Task = function (_React$Component2) {
+  _inherits(Task, _React$Component2);
+
+  function Task() {
+    _classCallCheck(this, Task);
+
+    return _possibleConstructorReturn(this, (Task.__proto__ || Object.getPrototypeOf(Task)).apply(this, arguments));
+  }
+
+  _createClass(Task, [{
+    key: 'render',
+    value: function render() {
+      var _props = this.props,
+          task = _props.task,
+          onDelete = _props.onDelete,
+          onComplete = _props.onComplete;
+      var id = task.id,
+          content = task.content,
+          completed = task.completed;
+
+
+      return React.createElement(
+        'div',
+        { className: 'row mb-1' },
+        React.createElement(
+          'p',
+          { className: 'col' },
+          content
+        ),
+        React.createElement(
+          'button',
+          {
+            onClick: function onClick() {
+              return onDelete(id);
+            }
+          },
+          'Delete'
+        ),
+        React.createElement('input', {
+          className: 'd-inline-block mt-2',
+          type: 'checkbox',
+          onChange: function onChange() {
+            return onComplete(id, completed);
+          },
+          checked: completed
+        })
+      );
+    }
+  }]);
+
+  return Task;
 }(React.Component);
 
 ReactDOM.render(React.createElement(ToDoList, null), document.getElementById('root'));
