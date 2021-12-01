@@ -35,6 +35,7 @@ var ToDoList = function (_React$Component) {
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.fetchTasks = _this.fetchTasks.bind(_this);
     _this.deleteTask = _this.deleteTask.bind(_this);
+    _this.toggleComplete = _this.toggleComplete.bind(_this);
     return _this;
   }
 
@@ -99,7 +100,7 @@ var ToDoList = function (_React$Component) {
       if (!id) {
         return; // if no id is supplied, early return
       }
-      fetch('https://altcademy-to-do-list-api.herokuapp.com/tasks/' + id + '?api_key=48', {
+      fetch('https://altcademy-to-do-list-api.herokuapp.com/tasks/' + id + '?api_key=201', {
         method: "DELETE",
         mode: "cors"
       }).then(checkStatus).then(json).then(function (data) {

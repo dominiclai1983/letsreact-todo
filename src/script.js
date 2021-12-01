@@ -20,6 +20,7 @@ const checkStatus = (response) => {
       this.handleSubmit = this.handleSubmit.bind(this);
       this.fetchTasks = this.fetchTasks.bind(this);
       this.deleteTask = this.deleteTask.bind(this);
+      this.toggleComplete = this.toggleComplete.bind(this);
     }
 
     componentDidMount() {
@@ -77,7 +78,7 @@ const checkStatus = (response) => {
       if (!id) {
         return; // if no id is supplied, early return
       }
-      fetch(`https://altcademy-to-do-list-api.herokuapp.com/tasks/${id}?api_key=48`, {
+      fetch(`https://altcademy-to-do-list-api.herokuapp.com/tasks/${id}?api_key=201`, {
         method: "DELETE",
         mode: "cors",
       }).then(checkStatus)
