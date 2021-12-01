@@ -28,7 +28,8 @@ var ToDoList = function (_React$Component) {
 
     _this.state = {
       new_task: '',
-      tasks: []
+      tasks: [],
+      filter: 'all'
     };
 
     _this.handleChange = _this.handleChange.bind(_this);
@@ -36,6 +37,7 @@ var ToDoList = function (_React$Component) {
     _this.fetchTasks = _this.fetchTasks.bind(_this);
     _this.deleteTask = _this.deleteTask.bind(_this);
     _this.toggleComplete = _this.toggleComplete.bind(_this);
+    _this.toggleFilter = _this.toggleFilter.bind(_this);
     return _this;
   }
 
@@ -130,13 +132,22 @@ var ToDoList = function (_React$Component) {
       });
     }
   }, {
+    key: 'toggleFilter',
+    value: function toggleFilter(e) {
+      console.log(e.target.name);
+      this.setState({
+        filter: e.target.name
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this6 = this;
 
       var _state = this.state,
           new_task = _state.new_task,
-          tasks = _state.tasks;
+          tasks = _state.tasks,
+          filter = _state.filter;
 
 
       return React.createElement(
@@ -153,7 +164,15 @@ var ToDoList = function (_React$Component) {
               { className: 'mb-3' },
               'To Do List'
             ),
-            tasks.length > 0 ? tasks.map(function (task) {
+            tasks.length > 0 ? tasks.filter(function (task) {
+              if (filter === 'all') {
+                return true;
+              } else if (filter === 'active') {
+                return !task.completed;
+              } else {
+                return task.completed;
+              }
+            }).map(function (task) {
               return React.createElement(Task, {
                 key: task.id,
                 task: task,
@@ -164,6 +183,28 @@ var ToDoList = function (_React$Component) {
               'p',
               null,
               'no tasks here'
+            ),
+            React.createElement(
+              'div',
+              { className: 'mt-3' },
+              React.createElement(
+                'label',
+                null,
+                React.createElement('input', { type: 'checkbox', name: 'all', checked: filter === "all", onChange: this.toggleFilter }),
+                ' All'
+              ),
+              React.createElement(
+                'label',
+                null,
+                React.createElement('input', { type: 'checkbox', name: 'active', checked: filter === "active", onChange: this.toggleFilter }),
+                ' Active'
+              ),
+              React.createElement(
+                'label',
+                null,
+                React.createElement('input', { type: 'checkbox', name: 'completed', checked: filter === "completed", onChange: this.toggleFilter }),
+                ' Completed'
+              )
             ),
             React.createElement(
               'form',
